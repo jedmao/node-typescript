@@ -1,6 +1,8 @@
 {
+  "version": "0.1.0",
   "author": {
-    "name": "Diullei Gomes"
+    "name": "Diullei Gomes",
+    "email": "diullei@gmail.com"
   },
   "name": "node-typescript",
   "description": "The TypeScript API exposed to nodejs. Use to compile typescript code in memory",
@@ -12,16 +14,15 @@
     "javascript",
     "nodejs"
   ],
-  "version": "0.1.0",
   "homepage": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Diullei/node-typescript"
+    "url": "git://github.com/Diullei/node-typescript"
   },
   "engines": {
     "node": "0.8.x"
   },
-  "main": "lib/compiler",
+  "main": "./index",
   "dependencies": {
     "typescript": "0.8.3"
   }

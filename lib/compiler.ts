@@ -2,6 +2,7 @@
 /// <reference path="wrapper.d.ts" />
 
 var TypeScript = require("./wrapper.js").TypeScript;
+export var libdPath = require("./wrapper.js")._libdPath;
 
 // Aggregate various writes into a single array of lines. Useful for passing to the
 // TypeScript compiler to fill with source code or errors.

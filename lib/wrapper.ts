@@ -9,7 +9,8 @@ var fs = require('fs'),
 
     var typescriptmodulefile = require.resolve("typescript");
     var location = path.dirname(typescriptmodulefile);
-
+	var tmp = module.exports._libdPath = require.resolve(location + '/lib.d.ts');
+	
     var contents = [
         "(function() {",
         fs.readFileSync(typescriptmodulefile, "utf8"),
@@ -21,6 +22,4 @@ var fs = require('fs'),
 
     var TypeScript = module.exports.TypeScript = sandbox.expTypeScript;
     TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-
-    var tmp = module.exports._libdPath = require.resolve(location + '/lib.d.ts');
 })();
