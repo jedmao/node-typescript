@@ -40,7 +40,7 @@ compiler.emit(stdout);
 
 > Get the javascript output in `stdout.fileCollection`. To this example the javascript output is:
 
-```json
+```javascript
 { '.../xxx.js':
    { lines:
       [ 'var Greeter = (function () {',
