@@ -5,8 +5,14 @@ The TypeScript API exposed to nodejs. Use to compile typescript code in memory.
 
 ## Usage
 
+install `node-typescript` with npm:
+
+	npm i node-typescript
+
+Create a file with this sample code:
+
 ```javascript
-var tsc = require('../lib/compiler');
+var tsc = require('./node_modules/node-typescript/lib/compiler');
 var compiler = tsc.compiler;
 
 tsc.initDefault();
@@ -38,7 +44,7 @@ var stdout = new tsc.EmitterIOHost();
 compiler.emit(stdout);
 ```
 
-> Get the javascript output in `stdout.fileCollection`. To this example the javascript output is:
+Get the javascript output in `stdout.fileCollection`. To this example the javascript output is:
 
 ```javascript
 { '.../xxx.js':
