@@ -1,16 +1,13 @@
-var fs = require('fs');
-var compiler = require('../lib/compiler').compiler;
-var EmitterIOHost = require('../lib/compiler').EmitterIOHost;
-var libdPath = require("../lib/compiler").libdPath;
+var tsc = require('../lib/compiler');
+var compiler = tsc.compiler;
 
-compiler.parser.errorRecovery = true;
-compiler.setErrorCallback(function (start, len, message, block) {
-	console.log('Compilation error: ', message, '\n Code block: ', block, ' Start position: ', start, ' Length: ', len);
-});
+tsc.initDefault();
 
-compiler.addUnit(fs.readFileSync(libdPath, 'utf8'), libdPath);
-	
-compiler.addUnit('\
+var code = '\
+/// <reference path=\'reference.ts\' />\n\
+\
+var test = new Test();\
+\
 class Greeter {\
     greeting: string;\
     constructor(message: string) {\
@@ -27,10 +24,12 @@ button.onclick = function() {\
     alert(greeter.greet());\
 };\
 document.body.appendChild(button);\
-', 'xxx');
+';
+
+tsc.resolve(__dirname + '/xxx.ts', code, compiler);
 
 compiler.typeCheck();
 
-var stdout = new EmitterIOHost();
+var stdout = new tsc.EmitterIOHost();
 compiler.emit(stdout);
 console.log(stdout.fileCollection)

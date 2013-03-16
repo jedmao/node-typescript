@@ -1,6 +1,9 @@
 /// <reference path="typings/DefinitelyTyped/node/node.d.ts" />
 /// <reference path="wrapper.d.ts" />
 
+var fs = require('fs');
+var _path = require('path');
+
 var TypeScript = require("./wrapper.js").TypeScript;
 export var libdPath = require("./wrapper.js")._libdPath;
 
@@ -71,3 +74,38 @@ export class EmitterIOHost implements TypeScript.EmitterIOHost {
 }
 
 export var compiler = new TypeScript.TypeScriptCompiler(new WriterAggregator());
+
+export function initDefault(){
+    compiler.parser.errorRecovery = true;
+    compiler.setErrorCallback(function (start, len, message, block) {
+        console.log('Compilation error: ', message, '\n Code block: ', block, ' Start position: ', start, ' Length: ', len);
+    });
+
+    compiler.addUnit(fs.readFileSync(libdPath, 'utf8'), libdPath);
+}
+
+export function resolve(path, code, compiler){
+    var optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;
+
+    var lines = code.split('\r\n');
+    if (lines.length === 1) {
+        lines = code.split('\n');
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var isTripleSlashReference = /[\/]{3}\s*<reference path/.test(line);
+        var testMetaData = optionRegex.exec(line);
+        // Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
+        if (isTripleSlashReference) {
+            var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
+            if (isRef) {
+                var ref = _path.dirname(path) + '/' + isRef[1];
+                console.log(ref);
+                resolve(ref, fs.readFileSync(ref, 'utf8'), compiler); 
+            }
+        }
+    }
+
+    compiler.addUnit(code, path);
+}
