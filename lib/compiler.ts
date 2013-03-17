@@ -75,10 +75,15 @@ export class EmitterIOHost implements TypeScript.EmitterIOHost {
 
 export var compiler = new TypeScript.TypeScriptCompiler(new WriterAggregator());
 
+export function init(){
+    compiler = new TypeScript.TypeScriptCompiler(new WriterAggregator());
+}
+
 export function initDefault(){
+    init();
     compiler.parser.errorRecovery = true;
     compiler.setErrorCallback(function (start, len, message, block) {
-        console.log('Compilation error: ', message, '\n Code block: ', block, ' Start position: ', start, ' Length: ', len);
+        console.log('[typescript] (', start, ':', len + ') compilation error: ', message);
     });
 
     compiler.addUnit(fs.readFileSync(libdPath, 'utf8'), libdPath);
