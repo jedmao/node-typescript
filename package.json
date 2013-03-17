@@ -4,6 +4,7 @@
     "name": "Diullei Gomes",
     "email": "diullei@gmail.com"
   },
+  "license": "MIT",
   "name": "node-typescript",
   "description": "The TypeScript API exposed to nodejs. Use to compile typescript code in memory",
   "keywords": [
@@ -22,7 +23,10 @@
   "engines": {
     "node": "0.8.x"
   },
-  "main": "./lib/compiler",
+  "directories": {
+    "lib": "./"
+  },
+  "main": "./ts-c.js",
   "dependencies": {
     "typescript": "0.8.3"
   }
