@@ -7,5 +7,10 @@ exports.compile = function(file, code){
 	compiler.typeCheck();
 	var stdout = new tsc.EmitterIOHost();
 	compiler.emit(stdout);
-	return stdout.fileCollection[file.replace('.ts', '.js')].lines.join('');
+
+	var jscode = '';
+	for (var attr in stdout.fileCollection) {
+		jscode = stdout.fileCollection[attr].lines.join('');
+	};
+	return jscode;
 }
