@@ -32,4 +32,4 @@ compiler.typeCheck();
 
 var stdout = new tsc.EmitterIOHost();
 compiler.emit(stdout);
-console.log(stdout.fileCollection)
+console.log(stdout.fileCollection);

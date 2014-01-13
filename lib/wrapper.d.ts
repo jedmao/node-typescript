@@ -1,3 +1,3 @@
-module TypeScript {
+declare module TypeScript {
     export interface EmitterIOHost {}
 }

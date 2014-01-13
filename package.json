@@ -1,19 +1,17 @@
 {
-  "version": "0.1.2",
-  "author": {
-    "name": "Diullei Gomes",
-    "email": "diullei@gmail.com"
-  },
+  "version": "0.9.5",
+  "authors": [
+    "Diullei Gomes <diullei@gmail.com>",
+    "Jed Hunsaker <jed.hunsaker+npm@gmail.com>"
+  ],
   "license": "MIT",
   "name": "node-typescript",
   "description": "The TypeScript API exposed to nodejs. Use to compile typescript code in memory",
   "keywords": [
-    "TypeScript",
-    "Microsoft",
+    "typescript",
     "compiler",
     "language",
-    "javascript",
-    "nodejs"
+    "microsoft"
   ],
   "homepage": "",
   "repository": {
@@ -28,6 +26,6 @@
   },
   "main": "./ts-c.js",
   "dependencies": {
-    "typescript": "0.8.3"
+    "typescript": "0.9.5"
   }
 }
