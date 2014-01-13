@@ -1,25 +1,12 @@
-/// <reference path="../bower_components/dt-node/node.d.ts" />
+/// <reference path='../bower_components/dt-node/node.d.ts' />
+import fs = require('fs');
+import vm = require('vm');
 
-var fs = require('fs'),
-	path = require('path'),
-	vm = require('vm');
 
-(() => {
-	var sandbox = { expTypeScript: null };
+var tsPath = require.resolve('typescript');
+var typeScriptSource = String(fs.readFileSync(tsPath, 'utf8'));
+var sandbox: any = {};
 
-	var typescriptmodulefile = require.resolve("typescript");
-	var location = path.dirname(typescriptmodulefile);
-	var tmp = module.exports._libdPath = require.resolve(location + '/lib.d.ts');
+vm.runInNewContext(typeScriptSource, sandbox);
 
-	var contents = [
-		"(function() {",
-		fs.readFileSync(typescriptmodulefile, "utf8"),
-		"expTypeScript = TypeScript;",
-		"}).call({});"
-	].join("");
-
-	vm.runInNewContext(contents, sandbox, 'ts.vm');
-
-	var TypeScript = module.exports.TypeScript = sandbox.expTypeScript;
-	TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-})();
+export var TypeScript = sandbox.TypeScript;

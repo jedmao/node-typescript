@@ -1,116 +1,55 @@
 /// <reference path="../bower_components/dt-node/node.d.ts" />
-/// <reference path="wrapper.d.ts" />
 
-var fs = require('fs');
-var _path = require('path');
+import wrapper = require('./wrapper');
+var TypeScript = wrapper.TypeScript;
 
-var TypeScript = require("./wrapper.js").TypeScript;
-export var libdPath = require("./wrapper.js")._libdPath;
+export class Compiler {
 
-// Aggregate various writes into a single array of lines. Useful for passing to the
-// TypeScript compiler to fill with source code or errors.
-export class WriterAggregator implements ITextWriter {
-	public lines: string[] = [];
-	public currentLine = "";
+	private _compiler;
+	private _logger = new Logger();
 
-	public Write(str) {
-		this.currentLine += str;
+	constructor(logger?: Logger, compilationSettings?: any) {
+		this._logger = logger || new Logger();
+		this._compiler = new TypeScript.TypeScriptCompiler(this._logger, compilationSettings);
 	}
 
-	public WriteLine(str) {
-		this.lines.push(this.currentLine + str);
-		this.currentLine = "";
-	}
+	//compile(...args: any[]) {
+	//	this._compiler.compile(this, args);
+	//	//compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, 0, false, resolvedFile.referencedFiles);
+	//}
 
-	public Close() {
-		if (this.currentLine.length > 0) { this.lines.push(this.currentLine); }
-		this.currentLine = "";
-	}
-
-	public reset() {
-		this.lines = [];
-		this.currentLine = "";
-	}
-}
-
-// Mimics having multiple files, later concatenated to a single file.
-export class EmitterIOHost implements TypeScript.EmitterIOHost {
-
-	private fileCollection = {};
-
-	// create file gets the whole path to create, so this works as expected with the --out parameter
-	public createFile(s: string, useUTF8?: boolean): ITextWriter {
-
-		if (this.fileCollection[s]) {
-			return <ITextWriter>this.fileCollection[s];
-		}
-
-		var writer = new WriterAggregator();
-		this.fileCollection[s] = writer;
-		return writer;
-	}
-
-	public directoryExists(s: string) { return false; }
-	public fileExists(s: string) { return typeof this.fileCollection[s] !== 'undefined'; }
-	public resolvePath(s: string) { return s; }
-
-	public reset() { this.fileCollection = {}; }
-
-	public toArray(): { filename: string; file: WriterAggregator; }[] {
-		var result: { filename: string; file: WriterAggregator; }[] = [];
-
-		for (var p in this.fileCollection) {
-			if (this.fileCollection.hasOwnProperty(p)) {
-				var current = <WriterAggregator>this.fileCollection[p];
-				if (current.lines.length > 0) {
-					if (p !== '0.js') { current.lines.unshift('////[' + p + ']'); }
-					result.push({ filename: p, file: this.fileCollection[p] });
-				}
-			}
-		}
-
-		return result;
-	}
-}
-
-export var compiler = new TypeScript.TypeScriptCompiler(new WriterAggregator());
-
-export function init(){
-	compiler = new TypeScript.TypeScriptCompiler(new WriterAggregator());
-}
-
-export function initDefault(){
-	init();
-	compiler.parser.errorRecovery = true;
-	compiler.setErrorCallback((start, len, message) => {
-		console.log('[typescript] (', start, ':', len + ') compilation error: ', message);
-	});
-
-	compiler.addUnit(fs.readFileSync(libdPath, 'utf8'), libdPath);
-}
-
-export function resolve(path, code, compiler){
-	var optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;
-
-	var lines = code.split('\r\n');
-	if (lines.length === 1) {
-		lines = code.split('\n');
-	}
-
-	for (var i = 0; i < lines.length; i++) {
-		var line = lines[i];
-		var isTripleSlashReference = /[\/]{3}\s*<reference path/.test(line);
-		var testMetaData = optionRegex.exec(line);
-		// Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
-		if (isTripleSlashReference) {
-			var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
-			if (isRef) {
-				var ref = _path.dirname(path) + '/' + isRef[1];
-				console.log(ref);
-				resolve(ref, fs.readFileSync(ref, 'utf8'), compiler); 
-			}
+	compileSource(source: string, cb: Function) {
+		var scriptSnapshot = TypeScript.ScriptSnapshot.fromString(source);
+		this._compiler.addFile('.', scriptSnapshot);
+		for (var it = this._compiler.compile(); it.moveNext();) {
+			var result = it.current();
+			result.outputFiles.forEach(outputFile => {
+				cb(outputFile.text);
+			});
 		}
 	}
+}
 
-	compiler.addUnit(code, path);
+export class Logger {
+	information(message: string) {
+		this.message('information', message);
+	}
+	debug(message: string) {
+		this.message('debug', message);
+	}
+	warning(message: string) {
+		this.message('warning', message);
+	}
+	error(message: string) {
+		this.message('error', message);
+	}
+	fatal(message: string) {
+		this.message('fatal', message);
+	}
+	log(message: string) {
+		this.message('log', message);
+	}
+	private message(messageType: string, message: string) {
+		console.log('[typescript] [' + messageType + ']: ' + message);
+	}
 }

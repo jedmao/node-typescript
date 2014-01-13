@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3a464a0a-b0ba-4244-8034-0b8a5187d021}</ProjectGuid>
     <ProjectHome />
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <StartupFile>ts-c.js</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -16,16 +16,18 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include=".editorconfig" />
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
+    <Content Include="bower.json" />
     <Content Include="build.cmd" />
+    <Content Include="lib\compiler.ts" />
+    <Content Include="lib\wrapper.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Compile Include="Gruntfile.js" />
     <Compile Include="ts-c.js" />
-    <Content Include="lib\tsd-config.json" />
-    <Compile Include="lib\compiler.js" />
-    <Compile Include="lib\wrapper.js" />
-    <Compile Include="test\test1.js" />
+    <Compile Include="test\test1.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib" />
